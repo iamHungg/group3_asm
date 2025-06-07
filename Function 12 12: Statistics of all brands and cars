@@ -1,0 +1,41 @@
+//thêm vào CarList
+public void statistics() {
+    System.out.println("=== Thong ke toan bo hang xe va xe ===");
+    int totalBrands = brandList.size();
+    int totalCars = this.size();
+
+    Map<String, Integer> brandCarCount = new HashMap<>();
+    for (Car car : this) {
+        String brandID = car.getBrand().getBrandID();
+        brandCarCount.put(brandID, brandCarCount.getOrDefault(brandID, 0) + 1);
+    }
+
+    String mostCarsBrandID = null, leastCarsBrandID = null;
+    int max = -1, min = Integer.MAX_VALUE;
+
+    for (String id : brandCarCount.keySet()) {
+        int count = brandCarCount.get(id);
+        if (count > max) {
+            max = count;
+            mostCarsBrandID = id;
+        }
+        if (count < min) {
+            min = count;
+            leastCarsBrandID = id;
+        }
+    }
+
+    System.out.println("Tong so hang xe: " + totalBrands);
+    System.out.println("Tong so xe: " + totalCars);
+    System.out.printf("So xe trung binh moi hang: %.2f\n", totalBrands == 0 ? 0 : (double) totalCars / totalBrands);
+
+    if (mostCarsBrandID != null) {
+        Brand most = brandList.get(brandList.searchID(mostCarsBrandID));
+        System.out.println("Hang co nhieu xe nhat: " + most.getBrandName() + " (" + max + " xe)");
+    }
+
+    if (leastCarsBrandID != null) {
+        Brand least = brandList.get(brandList.searchID(leastCarsBrandID));
+        System.out.println("Hang co it xe nhat: " + least.getBrandName() + " (" + min + " xe)");
+    }
+}
