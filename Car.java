@@ -1,16 +1,15 @@
-package group3_assignment;
+package caprj;
 
 import java.io.Serializable;
 
 /**
  * Date: /2025
  * @author Phạm Thành Nam - HE204565
- * Description: Car class representing details of a vehicle.
+ * Description: Represents a car and its attributes within the system.
  * Version: 1
  */
 
 public class Car implements Serializable {
-    // Attributes
     private String carID;
     private Brand brand;
     private String color;
@@ -29,7 +28,7 @@ public class Car implements Serializable {
         this.engineID = engineID;
     }
 
-    // Getters
+    // Getter methods (aligned with CarManager's object handling)
     public String getCarID() {
         return carID;
     }
@@ -50,7 +49,7 @@ public class Car implements Serializable {
         return engineID;
     }
 
-    // Setters
+    // Setter methods
     public void setCarID(String carID) {
         this.carID = carID;
     }
@@ -71,21 +70,27 @@ public class Car implements Serializable {
         this.engineID = engineID;
     }
 
-    // Methods
+    // Functional Methods
     @Override
     public String toString() {
-        return "<" + carID + ", " + brand + ", " + color + ", " + frameID + ", " + engineID + ">";
+        return "<" + carID + ", " + brand.getBrandID() + ", " + color + ", " + frameID + ", " + engineID + ">";
     }
 
-    public void screenString() {
-        System.out.println("<" + brand + ">\n" + carID + ", " + color + ", " + frameID + ", " + engineID + ">");
+    public void displayCarInfo() {
+        System.out.println("Car Details:");
+        System.out.println("Brand: " + brand.getName());
+        System.out.println("ID: " + carID);
+        System.out.println("Color: " + color);
+        System.out.println("Frame ID: " + frameID);
+        System.out.println("Engine ID: " + engineID);
     }
 
-    public int compareTo(Car car) {
-        int temp = brand.getName().compareTo(car.brand.getName());
-        return (temp != 0) ? temp : carID.compareTo(car.carID);
+    public int compareTo(Car otherCar) {
+        int result = brand.getName().compareTo(otherCar.getBrand().getName());
+        return (result != 0) ? result : carID.compareTo(otherCar.getCarID());
     }
 }
+
 
 
 
