@@ -81,7 +81,7 @@ public class Brand implements Serializable {
      */
     @Override
     public String toString() {
-        return "<" + brandID + ", " + brandName + ", " + soundBrand + ": " + price + ">";
+        return brandID + ", " + brandName + ", " + soundBrand + ": " + price;
     }
 
     // --- Phương thức hỗ trợ kiểm tra ràng buộc (tùy chọn) ---
