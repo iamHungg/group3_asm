@@ -7,12 +7,11 @@ package caprj;
  *Version: 1
  */
 
-public class CarManager {
-    import java.util.ArrayList;
+import java.util.ArrayList;
+import java.util.Scanner;
 
 public class CarManager {
     public static void main(String[] args) {
-        // Tạo danh sách lựa chọn menu
         ArrayList<String> ops = new ArrayList<>();
         ops.add("List all brands");
         ops.add("Add a new brand");
@@ -25,21 +24,27 @@ public class CarManager {
         ops.add("Remove a car based on its ID");
         ops.add("Update a car based on its ID");
         ops.add("Save cars to file, named cars.txt");
+        ops.add("Statistics of all brands and cars");
+        ops.add("Load data from file again");
 
-        // Tạo đối tượng menu
+        Scanner scanner = new Scanner(System.in);
         Menu menu = new Menu();
 
-        // Tạo và nạp danh sách Brand
         BrandList brandList = new BrandList();
-        brandList.loadFromFile("brands.txt");
+        if (!brandList.loadFromFile("brands.txt")) {
+            System.out.println("Could not load brands.txt. Exiting.");
+            return;
+        }
 
-        // Tạo và nạp danh sách Car (cần brandList để khởi tạo Car)
         CarList carList = new CarList(brandList);
-        carList.loadFromFile("cars.txt");
+        if (!carList.loadFromFile("cars.txt")) {
+            System.out.println("Could not load cars.txt. Exiting.");
+            return;
+        }
 
         int choice;
         do {
-            System.out.println("\n----- MINH TRANG BMW CAR MANAGER -----");
+            System.out.println("\n====== MINH TRANG BMW SHOWROOM ======");
             choice = menu.int_getChoice(ops);
 
             switch (choice) {
@@ -50,7 +55,8 @@ public class CarManager {
                     brandList.addBrand();
                     break;
                 case 3:
-                    String searchID = Inputter.getString("Enter Brand ID to search: ");
+                    System.out.print("Enter Brand ID to search: ");
+                    String searchID = scanner.nextLine().trim();
                     int pos = brandList.searchID(searchID);
                     if (pos < 0) {
                         System.out.println("Not found!");
@@ -62,8 +68,11 @@ public class CarManager {
                     brandList.updateBrand();
                     break;
                 case 5:
-                    brandList.saveToFile("brands.txt");
-                    System.out.println("Saved to brands.txt");
+                    if (brandList.saveToFile("brands.txt")) {
+                        System.out.println("Saved to brands.txt successfully.");
+                    } else {
+                        System.out.println("Failed to save brands.");
+                    }
                     break;
                 case 6:
                     carList.listCars();
@@ -81,13 +90,23 @@ public class CarManager {
                     carList.updateCar();
                     break;
                 case 11:
-                    carList.saveToFile("cars.txt");
-                    System.out.println("Saved to cars.txt");
+                    if (carList.saveToFile("cars.txt")) {
+                        System.out.println("Saved to cars.txt successfully.");
+                    } else {
+                        System.out.println("Failed to save cars.");
+                    }
+                    break;
+                case 12:
+                    carList.statistics();
+                    break;
+                case 13:
+                    brandList.loadFromFile("brands.txt");
+                    carList.loadFromFile("cars.txt");
+                    System.out.println("Da nap lai du lieu tu file.");
                     break;
                 default:
-                    System.out.println("Exit program!");
+                    System.out.println("Goodbye.");
             }
         } while (choice > 0 && choice <= ops.size());
     }
-}
 }
