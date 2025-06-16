@@ -1,48 +1,43 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.carmanagement;
 
-/**
- *
- * @author vieth
- */
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Menu {
     private int response;
-    private Scanner scanner = new Scanner (System.in);
-    
-    //For the menu list
-    public int int_getChoice (ArrayList <String> options) {
-        for (String i: options) {
-            System.out.println(i);
+    private Scanner scanner = new Scanner(System.in);
+
+    // Phương thức để hiển thị menu và nhận lựa chọn của người dùng
+    public <E> int getChoice(ArrayList<E> options) {
+        // Hiển thị các lựa chọn
+        for (int i = 0; i < options.size(); i++) {
+            System.out.println((i + 1) + ". " + options.get(i)); // In ra danh sách tùy chọn
         }
-        System.out.print("Please choose an option 1..11: ");
+        System.out.print("Please choose an option 1.." + options.size() + ": ");
+
+        // Kiểm tra tính hợp lệ của nhập liệu
+        while (!scanner.hasNextInt()) {
+            System.out.println("Invalid input. Please enter a valid number.");
+            scanner.next(); // Tiêu hóa giá trị không hợp lệ
+        }
+
         response = scanner.nextInt();
-        return response;
+        scanner.nextLine(); // Tiêu hóa ký tự newline còn sót lại
+        if (response < 1 || response > options.size()) {
+            System.out.println("Invalid choice. Please choose a valid option.");
+            return getChoice(options); // Đệ quy để yêu cầu nhập lại
+        }
+        return response; // Trả về chỉ số lựa chọn hợp lệ
     }
 
-    //Get user choice as an integer
-    public int int_getChoice (BrandList brand) {
-        int n = brand.size();
-        for (int i = 0; i < n; i++) {
-            System.out.println("" + (i+1) + ". " + brand.get(i));
-        }
-        System.out.print("Please choose an option 1..11: ");
-        response = scanner.nextInt();
-        return response;
-    }
-
-    //Get user choice as an object in the list
-    public Brand ref_getChoice (BrandList options) {
-        int N = options.size();
+    // Phương thức chọn một Brand từ BrandList
+    public Brand ref_getChoice(BrandList options) {
         System.out.println("Brand ID List:");
-        do {
-            response = int_getChoice(options);
-        } while ((response < 0) || (response > N));
-        return options.get(response - 1);
+
+        // Lấy lựa chọn của người dùng từ BrandList
+        int choice = getChoice(options);
+
+        // Trả về đối tượng Brand tương ứng
+        return options.get(choice - 1);
     }
 }
