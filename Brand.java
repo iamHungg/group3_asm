@@ -83,23 +83,4 @@ public class Brand implements Serializable {
     public String toString() {
         return brandID + ", " + brandName + ", " + soundBrand + ": " + price;
     }
-
-    // --- Phương thức hỗ trợ kiểm tra ràng buộc (tùy chọn) ---
-
-    /**
-     * Kiểm tra xem tên thương hiệu và thương hiệu âm thanh có hợp lệ (không null và không rỗng) không.
-     * @return true nếu hợp lệ, false nếu không.
-     */
-    public boolean isValidBrandNameAndSoundBrand() {
-        return brandName != null && !brandName.trim().isEmpty() &&
-               soundBrand != null && !soundBrand.trim().isEmpty();
-    }
-
-    /**
-     * Kiểm tra xem giá có phải là số dương không.
-     * @return true nếu giá lớn hơn 0, false nếu không.
-     */
-    public boolean isValidPrice() {
-        return price > 0;
-    }
 }
