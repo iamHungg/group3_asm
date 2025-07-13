@@ -22,7 +22,7 @@ public class Brand implements Serializable {
     
     /**
      * Constructor mặc định.
-     * Khởi tạo một đối tượng Brand với các giá trị mặc định (null cho String, 0.0 cho double).
+     * Khởi tạo một đối tượng Brand với các giá trị mặc định
      */
     public Brand() {
     }
