@@ -1,0 +1,176 @@
+/**
+     * Tìm kiếm xe nâng cao theo nhiều tiêu chí: hãng, khoảng giá, màu sắc.
+     * Người dùng có thể bỏ trống tiêu chí nào không muốn lọc.
+     */
+    public void advancedSearch() {
+        Scanner input = new Scanner(System.in);
+        System.out.println("--- Advanced Car Search ---");
+        System.out.println("Enter search criteria (leave blank to ignore a filter).");
+
+        System.out.print("Enter brand name: ");
+        String brandQuery = input.nextLine().trim().toLowerCase();
+
+        System.out.print("Enter color: ");
+        String colorQuery = input.nextLine().trim().toLowerCase();
+
+        double minPrice = 0;
+        System.out.print("Enter minimum price (e.g., 30000): ");
+        try {
+            String minPriceStr = input.nextLine().trim();
+            if (!minPriceStr.isEmpty()) {
+                minPrice = Double.parseDouble(minPriceStr);
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid number format for min price. Ignored.");
+        }
+
+        double maxPrice = 0;
+        System.out.print("Enter maximum price (e.g., 50000): ");
+        try {
+            String maxPriceStr = input.nextLine().trim();
+            if (!maxPriceStr.isEmpty()) {
+                maxPrice = Double.parseDouble(maxPriceStr);
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid number format for max price. Ignored.");
+        }
+
+        ArrayList<Car> results = new ArrayList<>();
+        boolean criteriaEntered = !brandQuery.isEmpty() || !colorQuery.isEmpty() || minPrice > 0 || maxPrice > 0;
+
+        if (!criteriaEntered) {
+            System.out.println("Please enter at least one search criterion.");
+            return;
+        }
+
+        for (Car car : this) {
+            // Bước 1: Kiểm tra điều kiện bắt buộc về giá trước tiên.
+            boolean priceMatch = false;
+            boolean priceCriteriaEntered = minPrice > 0 || maxPrice > 0;
+            if (!priceCriteriaEntered) {
+                priceMatch = true; // Nếu không nhập giá, coi như khớp
+            } else {
+                double carPrice = car.getBrand().getPrice();
+                boolean minOk = (minPrice == 0) || (carPrice >= minPrice);
+                boolean maxOk = (maxPrice == 0) || (carPrice <= maxPrice);
+                if (minOk && maxOk) {
+                    priceMatch = true;
+                }
+            }
+
+            // Nếu không khớp giá, bỏ qua xe này và xét xe tiếp theo
+            if (!priceMatch) {
+                continue;
+            }
+
+            // Bước 2: Nếu đã khớp giá, kiểm tra điều kiện OR cho hãng và màu
+            boolean brandOrColorMatch = false;
+            boolean brandCriteriaEntered = !brandQuery.isEmpty();
+            boolean colorCriteriaEntered = !colorQuery.isEmpty();
+            
+            // Nếu không nhập hãng và màu, xe nào khớp giá cũng được lấy
+            if (!brandCriteriaEntered && !colorCriteriaEntered) {
+                brandOrColorMatch = true;
+            } else {
+                // Kiểm tra hãng
+                if (brandCriteriaEntered && car.getBrand().getBrandName().toLowerCase().contains(brandQuery)) {
+                    brandOrColorMatch = true;
+                }
+                // Kiểm tra màu
+                if (colorCriteriaEntered && car.getColor().toLowerCase().contains(colorQuery)) {
+                    brandOrColorMatch = true;
+                }
+            }
+
+            // Bước 3: Nếu xe khớp giá VÀ khớp ít nhất một trong (hãng, màu) thì thêm vào kết quả
+            if (priceMatch && brandOrColorMatch) {
+                results.add(car);
+            }
+        }
+
+        System.out.println("\n--- Search Results (" + results.size() + " cars found) ---");
+        if (results.isEmpty()) {
+            System.out.println("No cars matched your criteria.");
+        } else {
+            for (Car car : results) {
+                Brand brand = car.getBrand();
+                System.out.println("=== Car Details ===");
+                System.out.println("  Car ID       : " + car.getCarID());
+                System.out.println("  Color        : " + car.getColor());
+                System.out.println("  Frame ID     : " + car.getFrameID());
+                System.out.println("  Engine ID    : " + car.getEngineID());
+                System.out.println("--- Brand Details ---");
+                System.out.println("  Brand Name   : " + brand.getBrandName());
+                System.out.println("  Sound System : " + brand.getSoundBrand());
+                System.out.printf("  Price        : %,.2f USD%n", brand.getPrice());
+                System.out.println("------------------------------");
+            }
+        }
+    }
+    
+     /**
+     * Tạo một file báo giá bán hàng (.txt) cho một chiếc xe cụ thể.
+     * Yêu cầu người dùng nhập ID xe và tên khách hàng.
+     */
+    public void generateSalesQuote() {
+        Scanner input = new Scanner(System.in);
+        System.out.println("--- Generate Sales Quote ---");
+
+        System.out.print("Enter the ID of the car to generate a quote for: ");
+        String carID = input.nextLine().trim();
+        int pos = searchID(carID); // Hàm searchID đã được nâng cấp
+
+        if (pos < 0) {
+            System.out.println("Error: Car with ID '" + carID + "' not found.");
+            return;
+        }
+
+        Car carToQuote = this.get(pos);
+        Brand brand = carToQuote.getBrand();
+
+        System.out.print("Enter customer's name: ");
+        String customerName = input.nextLine().trim();
+        if (customerName.isEmpty()) {
+            customerName = "Valued Customer";
+        }
+
+        String fileName = "quote_" + carToQuote.getCarID() + "_" + customerName.replaceAll("\\s+", "_") + ".txt";
+        
+        try (PrintWriter pw = new PrintWriter(new FileWriter(fileName))) {
+            
+            pw.println("**********************************************");
+            pw.println("* MINH TRANG BMW SHOWROOM          *");
+            pw.println("* SALES QUOTE                 *");
+            pw.println("**********************************************");
+            pw.println();
+            pw.println("Date: " + java.time.LocalDate.now());
+            pw.println("Customer: " + customerName);
+            pw.println();
+            pw.println("----------------------------------------------");
+            pw.println("            VEHICLE DETAILS");
+            pw.println("----------------------------------------------");
+            pw.println("  Car ID       : " + carToQuote.getCarID());
+            pw.println("  Brand        : " + brand.getBrandName());
+            pw.println("  Color        : " + carToQuote.getColor());
+            pw.println("  Frame ID     : " + carToQuote.getFrameID());
+            pw.println("  Engine ID    : " + carToQuote.getEngineID());
+            pw.println("  Sound System : " + brand.getSoundBrand());
+            pw.println();
+            pw.println("----------------------------------------------");
+            pw.println("                  PRICING");
+            pw.println("----------------------------------------------");
+            pw.printf("  Vehicle Price: %,.2f USD%n", brand.getPrice());
+            pw.println();
+            pw.println("----------------------------------------------");
+            pw.println();
+            pw.println("Thank you for your interest!");
+            pw.println();
+            pw.println("**********************************************");
+
+            System.out.println("Successfully generated sales quote: " + fileName);
+
+        } catch (IOException e) {
+            System.err.println("Error: Failed to write quote file. Please check permissions.");
+            e.printStackTrace();
+        }
+    }
